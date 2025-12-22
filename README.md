@@ -8,12 +8,12 @@ Hệ thống được thiết kế với ngôn ngữ thiết kế **Modern Profe
 
 |  1. Dashboard Tuyển dụng (Trang chủ) |  2. Chi tiết Vị trí Công việc |
 |:---:|:---:|
-| ![Home Page](./screenshots/1.png) | ![Job Detail](./screenshots/2.png) |
+| ![Home Page](./screenshot/1.png) | ![Job Detail](./screenshot/2.png) |
 | *Giao diện liệt kê thông minh với cơ chế lọc Badge.* | *Xử lý Rich Text chuyên sâu và Sidebar thông tin động.* |
 
 |  3. Danh mục Đối tác Doanh nghiệp |  4. Hồ sơ Năng lực Công ty |
 |:---:|:---:|
-| ![Company List](./screenshots/3.png) | ![Company Profile](./screenshots/4.png) |
+| ![Company List](./screenshot/3.png) | ![Company Profile](./screenshot/4.png) |
 | *Grid layout tự thích ứng và công cụ tìm kiếm Real-time.* | *Tổng hợp toàn bộ vị trí đang tuyển của doanh nghiệp.* |
 
 ---
