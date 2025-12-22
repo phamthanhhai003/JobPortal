@@ -65,13 +65,16 @@ interface Recruitment {
 
 ##  Quy trình Cài đặt & Phát triển
 
-1. **Chuẩn bị screenshots:** Đảm bảo bạn đã lưu 4 ảnh vào thư mục `/screenshots` ở gốc project.
-2. **Cài đặt:**
+1. **Khởi chạy API nếu dữ liệu đã được chuẩn bị**
+ ```bash
+   uvicorn api_test:app --host 0.0.0.0 --port 8008 --reload
+   ```
+3. **Cài đặt:**
    ```bash
    npm install
    ```
-3. **Môi trường:** Đảm bảo Backend API đã bật chế độ `Allow CORS` cho origin của ứng dụng.
-4. **Khởi chạy:**
+4. **Môi trường:** Đảm bảo Backend API đã bật chế độ `Allow CORS` cho origin của ứng dụng.
+5. **Khởi chạy:**
    ```bash
    npm run dev
    ```
