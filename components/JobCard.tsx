@@ -46,12 +46,6 @@ export const JobCard: React.FC<JobCardProps> = ({ job, companyName }) => {
                 {categoryText}
               </span>
             )}
-            {industriesText && (
-              <span className="hidden sm:inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 whitespace-nowrap">
-                <Factory className="w-3.5 h-3.5 mr-1" />
-                {industriesText}
-              </span>
-            )}
             <Link 
               to={`/recruitment/${job.media_internal_id}`}
               className="hidden md:inline-flex items-center px-4 py-1.5 border border-transparent text-sm font-semibold rounded-lg text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors whitespace-nowrap"
@@ -71,18 +65,17 @@ export const JobCard: React.FC<JobCardProps> = ({ job, companyName }) => {
           </Link>
         </div>
 
-        {/* Row 3: Metadata row */}
+        {/* Row 3: Metadata row (Expertise/Industry moved here) */}
         <div className="flex flex-wrap items-center gap-y-2 gap-x-5 text-sm text-gray-500 mb-4">
           <div className="flex items-center">
             <Briefcase className="w-4 h-4 mr-1.5 text-gray-400" />
             <span>Full Time</span>
           </div>
           
-          {/* Mobile only Industry if not in header */}
           {industriesText && (
-            <div className="flex items-center sm:hidden">
+            <div className="flex items-center">
               <Factory className="w-4 h-4 mr-1.5 text-gray-400" />
-              <span>{industriesText}</span>
+              <span className="line-clamp-1">{industriesText}</span>
             </div>
           )}
 
