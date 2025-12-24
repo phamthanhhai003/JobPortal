@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Briefcase, GraduationCap, Factory, DollarSign, ChevronRight, Tag } from 'lucide-react';
+import { MapPin, Briefcase, GraduationCap, DollarSign, ChevronRight, Tag, ShieldCheck } from 'lucide-react';
 import { Recruitment } from '../types';
 
 interface JobCardProps {
@@ -10,23 +10,51 @@ interface JobCardProps {
 
 export const JobCard: React.FC<JobCardProps> = ({ job, companyName }) => {
   
-  const stripHtml = (htmlContent?: string) => {
-    if (!htmlContent) return '';
+  const stripHtml = (htmlContent?: any) => {
+    if (htmlContent === null || htmlContent === undefined) return '';
+    
+    // Convert to string and trim basic whitespace
+    let text = String(htmlContent).trim();
+    
+    // Handle literal string versions of empty/null values that sometimes come from APIs
+    const lowerText = text.toLowerCase();
+    if (
+      lowerText === '' || 
+      lowerText === 'none' || 
+      lowerText === 'null' || 
+      lowerText === 'undefined' ||
+      lowerText === '""' || 
+      lowerText === "''" || 
+      lowerText === '[]' || 
+      lowerText === '{}'
+    ) {
+      return '';
+    }
+    
+    // Create a temporary element to strip actual HTML tags
     const tmp = document.createElement("DIV");
-    tmp.innerHTML = htmlContent;
-    return tmp.textContent || tmp.innerText || "";
+    tmp.innerHTML = text;
+    let cleanText = (tmp.textContent || tmp.innerText || "").trim();
+
+    // Replace non-breaking spaces (\u00a0) and other hidden characters
+    cleanText = cleanText.replace(/\u00a0/g, " ").replace(/\s+/g, " ").trim();
+
+    return cleanText;
   };
 
   const previewContent = stripHtml(job.description || job.requirements) || 'Click to see full requirements...';
   const eduText = stripHtml(job.edu);
-  const industriesText = stripHtml(job.industries);
+  
+  // Apply strict cleaning to expertise
+  const expertiseText = stripHtml(job.expertise);
+  
   const displaySalary = job.salary_range || job.salary;
   const categoryText = job.category || job.job_category;
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 transition-all duration-200 hover:shadow-md hover:border-blue-200 group">
       <div className="flex flex-col gap-1">
-        {/* Row 1: Title and Salary + Category + Action */}
+        {/* Row 1: Title and Salary/Category Badges */}
         <div className="flex flex-wrap items-start justify-between gap-4">
           <h3 className="text-xl font-bold text-gray-900 flex-1 leading-tight group-hover:text-blue-800 transition-colors">
             <Link to={`/recruitment/${job.media_internal_id}`}>
@@ -55,7 +83,7 @@ export const JobCard: React.FC<JobCardProps> = ({ job, companyName }) => {
           </div>
         </div>
 
-        {/* Row 2: Company Name (Blue) */}
+        {/* Row 2: Company Name */}
         <div className="mb-2">
           <Link 
             to={`/company/${job.corporate_number}`}
@@ -65,24 +93,25 @@ export const JobCard: React.FC<JobCardProps> = ({ job, companyName }) => {
           </Link>
         </div>
 
-        {/* Row 3: Metadata row (Expertise/Industry moved here) */}
+        {/* Row 3: Metadata row */}
         <div className="flex flex-wrap items-center gap-y-2 gap-x-5 text-sm text-gray-500 mb-4">
           <div className="flex items-center">
             <Briefcase className="w-4 h-4 mr-1.5 text-gray-400" />
             <span>Full Time</span>
           </div>
-          
-          {industriesText && (
-            <div className="flex items-center">
-              <Factory className="w-4 h-4 mr-1.5 text-gray-400" />
-              <span className="line-clamp-1">{industriesText}</span>
-            </div>
-          )}
 
-          {eduText && (
+          {eduText !== "" && (
             <div className="flex items-center">
               <GraduationCap className="w-4 h-4 mr-1.5 text-gray-400" />
               <span className="line-clamp-1">{eduText}</span>
+            </div>
+          )}
+
+          {/* Render ONLY if we have a non-empty string after strict cleaning */}
+          {expertiseText && expertiseText !== "" && (
+            <div className="flex items-center">
+              <ShieldCheck className="w-4 h-4 mr-1.5 text-blue-500/70" />
+              <span className="font-medium text-gray-700 line-clamp-1">{expertiseText}</span>
             </div>
           )}
 

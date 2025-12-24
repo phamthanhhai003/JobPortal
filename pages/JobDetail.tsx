@@ -12,12 +12,12 @@ import {
   GraduationCap, 
   FileText, 
   CheckCircle, 
-  Factory, 
   Map,
   Gift,
   ExternalLink,
   DollarSign,
-  Tag
+  Tag,
+  ShieldCheck
 } from 'lucide-react';
 
 export const JobDetail: React.FC = () => {
@@ -69,11 +69,43 @@ export const JobDetail: React.FC = () => {
     return url.startsWith('http') ? url : `https://${url}`;
   };
 
+  const stripHtml = (htmlContent?: any) => {
+    if (htmlContent === null || htmlContent === undefined) return '';
+    
+    let text = String(htmlContent).trim();
+    
+    const lowerText = text.toLowerCase();
+    if (
+      lowerText === '' || 
+      lowerText === 'none' || 
+      lowerText === 'null' || 
+      lowerText === 'undefined' ||
+      lowerText === '""' || 
+      lowerText === "''" || 
+      lowerText === '[]' || 
+      lowerText === '{}'
+    ) {
+      return '';
+    }
+    
+    const tmp = document.createElement("DIV");
+    tmp.innerHTML = text;
+    let cleanText = (tmp.textContent || tmp.innerText || "").trim();
+
+    // Clean invisible characters
+    cleanText = cleanText.replace(/\u00a0/g, " ").replace(/\s+/g, " ").trim();
+
+    return cleanText;
+  };
+
   const logoSrc = company?.company_logo || (company?.company_domain ? `https://logo.clearbit.com/${company.company_domain.replace(/^https?:\/\//, '').split('/')[0]}` : null);
 
   const richTextClass = "prose max-w-none text-gray-700 leading-relaxed [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-1 [&_strong]:font-bold whitespace-pre-line";
   const displaySalary = recruitment.salary_range || recruitment.salary;
   const categoryText = recruitment.category || recruitment.job_category;
+  
+  // Use the new strict stripHtml for expertise
+  const expertiseText = stripHtml(recruitment.expertise);
 
   return (
     <div className="animate-fade-in space-y-6">
@@ -88,8 +120,7 @@ export const JobDetail: React.FC = () => {
                     <div className="flex-1">
                         <h1 className="text-3xl font-bold text-gray-900 mb-3 leading-tight">{recruitment.title || recruitment.job_category || "Job Opportunity"}</h1>
                         
-                        {/* Highlights Section */}
-                        <div className="flex flex-wrap items-center gap-3 mb-4">
+                        <div className="flex flex-wrap items-center gap-3 mb-6">
                             {displaySalary && (
                                 <div className="flex items-center bg-green-50 text-green-700 px-4 py-1.5 rounded-full font-bold border border-green-200 shadow-sm text-sm">
                                     <DollarSign className="w-4 h-4 mr-1.5 text-green-600" />
@@ -102,26 +133,28 @@ export const JobDetail: React.FC = () => {
                                     {categoryText}
                                 </div>
                             )}
-                            {recruitment.industries && (
-                                <div className="flex items-center bg-blue-50 text-blue-700 px-4 py-1.5 rounded-full font-bold border border-blue-200 shadow-sm text-sm">
-                                    <Factory className="w-4 h-4 mr-1.5 text-blue-600" />
-                                    {recruitment.industries}
-                                </div>
-                            )}
                         </div>
 
-                        {/* General Metadata */}
-                        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-gray-500 text-sm">
+                        <div className="flex flex-wrap items-center gap-x-6 gap-y-4 text-gray-600 text-sm">
+                            <div className="flex items-center">
+                                <Briefcase className="w-4 h-4 mr-2 text-gray-400" />
+                                <span className="font-medium">Full Time</span>
+                            </div>
+                            
+                            {/* Strictly check for non-empty expertise text before rendering the block */}
+                            {expertiseText && expertiseText !== "" && (
+                                <div className="flex items-center">
+                                    <ShieldCheck className="w-4 h-4 mr-2 text-blue-500" />
+                                    <span className="font-bold text-gray-800">Chuyên môn: {expertiseText}</span>
+                                </div>
+                            )}
+
                             {recruitment.address && (
                                 <div className="flex items-center">
                                     <MapPin className="w-4 h-4 mr-2 text-gray-400" />
                                     {recruitment.address}
                                 </div>
                             )}
-                            <div className="flex items-center">
-                                <Briefcase className="w-4 h-4 mr-2 text-gray-400" />
-                                Full Time
-                            </div>
                         </div>
                     </div>
                     
@@ -178,7 +211,7 @@ export const JobDetail: React.FC = () => {
                   </div>
                 )}
 
-                {recruitment.edu && (
+                {recruitment.edu && stripHtml(recruitment.edu) !== "" && (
                   <div>
                     <div className="flex items-center mb-4">
                         <div className="p-2 bg-purple-100 rounded-lg mr-3">
@@ -192,77 +225,56 @@ export const JobDetail: React.FC = () => {
             </div>
         </div>
 
-        <div className="lg:col-span-1">
-            {company ? (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sticky top-24">
-                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 border-b pb-2">Hiring Company</h3>
-                    
-                    <div className="flex items-start mb-4">
-                        <div className="w-16 h-16 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-center overflow-hidden shrink-0 mr-4">
+        <div className="lg:col-span-1 space-y-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sticky top-24">
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Hiring Company</h3>
+                
+                {company ? (
+                   <div className="space-y-6">
+                      <div className="flex items-center gap-4">
+                         <div className="w-16 h-16 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-center p-2 overflow-hidden shrink-0">
                             {logoSrc && !imgError ? (
-                              <img 
-                                src={logoSrc} 
-                                alt={company.company_name} 
-                                className="w-full h-full object-contain p-1"
-                                onError={() => setImgError(true)}
-                              />
+                                <img src={logoSrc} alt={company.company_name} className="w-full h-full object-contain" onError={() => setImgError(true)} />
                             ) : (
-                              <Building2 className="w-8 h-8 text-blue-600" />
+                                <Building2 className="w-8 h-8 text-blue-600" />
                             )}
-                        </div>
-                        <div>
-                             <h4 className="font-bold text-lg text-gray-900 leading-tight mb-1">{company.company_name}</h4>
-                             <div className="flex items-center text-xs text-blue-600 font-semibold">
-                                <Map className="w-3 h-3 mr-1" />
-                                {company.province || "Various Locations"}
-                             </div>
-                        </div>
-                    </div>
+                         </div>
+                         <div>
+                            <h4 className="font-bold text-gray-900 leading-tight mb-1">{company.company_name}</h4>
+                            {company.province && (
+                                <span className="inline-flex items-center text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded font-medium">
+                                    <Map className="w-3 h-3 mr-1" />
+                                    {company.province}
+                                </span>
+                            )}
+                         </div>
+                      </div>
 
-                    <div className="space-y-3 mb-6">
-                        {company.company_domain && (
-                            <a 
-                                href={ensureHttp(company.company_domain)} 
-                                target="_blank" 
-                                rel="noreferrer" 
-                                className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline transition-colors"
-                            >
-                                <Globe className="w-4 h-4 mr-2" />
-                                Official Website
-                            </a>
-                        )}
-                        {recruitment.url && (
-                             <a 
-                                href={ensureHttp(recruitment.url)} 
-                                target="_blank" 
-                                rel="noreferrer" 
-                                className="flex items-center text-sm font-medium text-gray-500 hover:text-blue-600 hover:underline transition-colors"
-                            >
-                                <ExternalLink className="w-4 h-4 mr-2" />
-                                Original Job Post
-                            </a>
-                        )}
-                    </div>
+                      {company.source_company_url && (
+                        <a href={ensureHttp(company.source_company_url)} target="_blank" rel="noreferrer" className="flex items-center text-xs text-gray-500 hover:text-blue-600 transition-colors">
+                            <ExternalLink className="w-3 h-3 mr-2" />
+                            Original Job Post
+                        </a>
+                      )}
 
-                    <div className="mb-6">
-                        <p className="text-sm text-gray-600 line-clamp-4 leading-relaxed italic">
-                            {company.company_description || "Company description not available."}
-                        </p>
-                    </div>
+                      <p className="text-sm text-gray-500 italic">
+                        {company.company_description ? company.company_description.substring(0, 100) + '...' : 'Company description not available.'}
+                      </p>
 
-                    <Link 
-                        to={`/company/${encodeURIComponent(company.corporate_number)}`}
-                        className="block w-full text-center py-2.5 px-4 border border-blue-600 text-blue-600 rounded-lg text-sm font-semibold hover:bg-blue-50 transition-colors"
-                    >
+                      <Link 
+                        to={`/company/${company.corporate_number}`}
+                        className="flex items-center justify-center w-full py-3 border-2 border-blue-600 text-blue-600 rounded-xl font-bold hover:bg-blue-50 transition-all"
+                      >
                         View Full Company Profile
-                    </Link>
-                </div>
-            ) : (
-                <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 text-center">
-                    <Building2 className="w-10 h-10 text-gray-300 mx-auto mb-2" />
-                    <p className="text-gray-500">Company information is not available.</p>
-                </div>
-            )}
+                      </Link>
+                   </div>
+                ) : (
+                   <div className="text-center py-4 text-gray-400">
+                      <Building2 className="w-12 h-12 mx-auto mb-2 opacity-20" />
+                      <p>Company info unavailable</p>
+                   </div>
+                )}
+            </div>
         </div>
       </div>
     </div>

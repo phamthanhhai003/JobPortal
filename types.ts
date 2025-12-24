@@ -1,3 +1,4 @@
+
 export interface Company {
   corporate_number: string;
   company_name?: string;
@@ -24,6 +25,7 @@ export interface Recruitment {
   salary_range?: string; // New: Range-based salary info
   description?: string;
   edu?: string;
+  expertise?: string; // New: Dedicated expertise field
   industries?: string;
   benefits?: string; // New: Job benefits/perks
   url?: string;      // New: Original recruitment post URL
