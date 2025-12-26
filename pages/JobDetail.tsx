@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { api } from '../services/api';
@@ -8,16 +9,11 @@ import {
   Building2, 
   MapPin, 
   Briefcase, 
-  Globe, 
-  GraduationCap, 
-  FileText, 
-  CheckCircle, 
-  Map,
-  Gift,
   ExternalLink,
   DollarSign,
-  Tag,
-  ShieldCheck
+  ShieldCheck,
+  Share2,
+  Layers
 } from 'lucide-react';
 
 export const JobDetail: React.FC = () => {
@@ -35,7 +31,7 @@ export const JobDetail: React.FC = () => {
         const detail = await api.getRecruitment(id);
         setData(detail);
       } catch (err: any) {
-        setError(err.message || "Could not load job details.");
+        setError(err.message || "Không tìm thấy thông tin công việc.");
       } finally {
         setLoading(false);
       }
@@ -45,233 +41,183 @@ export const JobDetail: React.FC = () => {
 
   if (loading) {
      return (
-      <div className="flex justify-center items-center min-h-[50vh]">
-        <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
+      <div className="flex justify-center items-center min-h-[70vh]">
+        <Loader2 className="w-12 h-12 text-orange-600 animate-spin" />
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="text-center py-20 bg-white rounded-lg shadow-sm border border-red-100 mt-4 px-4">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">{error || "Job not found"}</h2>
-        <Link to="/" className="inline-flex items-center text-blue-600 hover:underline">
-            <ArrowLeft className="w-4 h-4 mr-1" /> Back to Job List
+      <div className="text-center py-32 bg-white rounded-3xl border border-gray-100 shadow-sm mt-4 px-4">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">{error || "Công việc không tồn tại"}</h2>
+        <Link to="/" className="inline-flex items-center px-6 py-3 bg-orange-600 text-white font-bold rounded-2xl hover:bg-orange-700 transition-colors shadow-lg shadow-orange-100">
+            <ArrowLeft className="w-4 h-4 mr-2" /> Trở về danh sách
         </Link>
       </div>
     );
   }
 
   const { recruitment, company } = data;
-
-  const ensureHttp = (url: string) => {
-    if (!url) return '#';
-    return url.startsWith('http') ? url : `https://${url}`;
-  };
-
-  const stripHtml = (htmlContent?: any) => {
-    if (htmlContent === null || htmlContent === undefined) return '';
-    
-    let text = String(htmlContent).trim();
-    
-    const lowerText = text.toLowerCase();
-    if (
-      lowerText === '' || 
-      lowerText === 'none' || 
-      lowerText === 'null' || 
-      lowerText === 'undefined' ||
-      lowerText === '""' || 
-      lowerText === "''" || 
-      lowerText === '[]' || 
-      lowerText === '{}'
-    ) {
-      return '';
-    }
-    
-    const tmp = document.createElement("DIV");
-    tmp.innerHTML = text;
-    let cleanText = (tmp.textContent || tmp.innerText || "").trim();
-
-    // Clean invisible characters
-    cleanText = cleanText.replace(/\u00a0/g, " ").replace(/\s+/g, " ").trim();
-
-    return cleanText;
-  };
-
   const logoSrc = company?.company_logo || (company?.company_domain ? `https://logo.clearbit.com/${company.company_domain.replace(/^https?:\/\//, '').split('/')[0]}` : null);
 
-  const richTextClass = "prose max-w-none text-gray-700 leading-relaxed [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-1 [&_strong]:font-bold whitespace-pre-line";
-  const displaySalary = recruitment.salary_range || recruitment.salary;
-  const categoryText = recruitment.category || recruitment.job_category;
-  
-  // Use the new strict stripHtml for expertise
-  const expertiseText = stripHtml(recruitment.expertise);
-
   return (
-    <div className="animate-fade-in space-y-6">
-       <Link to="/" className="inline-flex items-center text-sm text-gray-500 hover:text-blue-600">
-        <ArrowLeft className="w-4 h-4 mr-1" /> Back to Jobs
-      </Link>
+    <div className="animate-slide-up space-y-8">
+       <div className="flex items-center justify-between">
+            <Link to="/" className="inline-flex items-center text-sm font-bold text-gray-500 hover:text-orange-600 transition-colors">
+                <ArrowLeft className="w-4 h-4 mr-2" /> Quay lại tìm kiếm
+            </Link>
+            <button className="p-2.5 rounded-2xl border border-gray-100 text-gray-400 hover:text-orange-600 transition-colors">
+                <Share2 className="w-5 h-5" />
+            </button>
+       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-8">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6 mb-6">
-                    <div className="flex-1">
-                        <h1 className="text-3xl font-bold text-gray-900 mb-3 leading-tight">{recruitment.title || recruitment.job_category || "Job Opportunity"}</h1>
-                        
-                        <div className="flex flex-wrap items-center gap-3 mb-6">
-                            {displaySalary && (
-                                <div className="flex items-center bg-green-50 text-green-700 px-4 py-1.5 rounded-full font-bold border border-green-200 shadow-sm text-sm">
-                                    <DollarSign className="w-4 h-4 mr-1.5 text-green-600" />
-                                    {displaySalary}
-                                </div>
-                            )}
-                            {categoryText && (
-                                <div className="flex items-center bg-purple-50 text-purple-700 px-4 py-1.5 rounded-full font-bold border border-purple-200 shadow-sm text-sm">
-                                    <Tag className="w-4 h-4 mr-1.5 text-purple-600" />
-                                    {categoryText}
-                                </div>
-                            )}
-                        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <div className="lg:col-span-2 space-y-10">
+            <div className="bg-white rounded-[2.5rem] border border-gray-100 p-10 relative overflow-hidden shadow-sm">
+                <div className="absolute top-0 right-0 w-48 h-48 bg-orange-50 rounded-bl-full -z-10 opacity-50"></div>
+                
+                <header className="mb-10">
+                    <div className="flex flex-wrap gap-2 mb-6">
+                        <span className="bg-orange-600 text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest">
+                            Hot Job
+                        </span>
+                        <span className="bg-gray-100 text-gray-500 text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest">
+                            {recruitment.category || 'Recruitment'}
+                        </span>
+                        {recruitment.industries && (
+                          <span className="bg-orange-50 text-orange-600 text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest border border-orange-100">
+                             {recruitment.industries}
+                          </span>
+                        )}
+                    </div>
 
-                        <div className="flex flex-wrap items-center gap-x-6 gap-y-4 text-gray-600 text-sm">
-                            <div className="flex items-center">
-                                <Briefcase className="w-4 h-4 mr-2 text-gray-400" />
-                                <span className="font-medium">Full Time</span>
+                    <h1 className="text-4xl font-black text-gray-900 mb-6 leading-tight">
+                        {recruitment.title || recruitment.job_category || "Cơ hội việc làm"}
+                    </h1>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-6 bg-gray-50/50 rounded-3xl border border-gray-100">
+                        <div className="flex items-center">
+                            <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center mr-4">
+                                <DollarSign className="w-5 h-5 text-orange-600" />
                             </div>
-                            
-                            {/* Strictly check for non-empty expertise text before rendering the block */}
-                            {expertiseText && expertiseText !== "" && (
-                                <div className="flex items-center">
-                                    <ShieldCheck className="w-4 h-4 mr-2 text-blue-500" />
-                                    <span className="font-bold text-gray-800">Chuyên môn: {expertiseText}</span>
-                                </div>
-                            )}
-
-                            {recruitment.address && (
-                                <div className="flex items-center">
-                                    <MapPin className="w-4 h-4 mr-2 text-gray-400" />
-                                    {recruitment.address}
-                                </div>
-                            )}
+                            <div>
+                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Mức lương</p>
+                                <p className="text-gray-900 font-extrabold">{recruitment.salary_range || recruitment.salary || 'Thỏa thuận'}</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center">
+                            <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center mr-4">
+                                <Layers className="w-5 h-5 text-orange-600" />
+                            </div>
+                            <div>
+                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Ngành nghề</p>
+                                <p className="text-gray-900 font-extrabold truncate max-w-[150px]">{recruitment.industries || recruitment.job_category || 'Đa ngành'}</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center">
+                            <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center mr-4">
+                                <ShieldCheck className="w-5 h-5 text-orange-600" />
+                            </div>
+                            <div>
+                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Kinh nghiệm</p>
+                                <p className="text-gray-900 font-extrabold">{recruitment.expertise || 'Không yêu cầu'}</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center">
+                            <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center mr-4">
+                                <MapPin className="w-5 h-5 text-orange-600" />
+                            </div>
+                            <div>
+                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Địa điểm</p>
+                                <p className="text-gray-900 font-extrabold">{recruitment.address || 'Toàn quốc'}</p>
+                            </div>
                         </div>
                     </div>
-                    
-                    {recruitment.url && (
-                        <div className="shrink-0">
-                            <a 
-                                href={ensureHttp(recruitment.url)} 
-                                target="_blank" 
-                                rel="noreferrer" 
-                                className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-md hover:shadow-lg active:scale-95"
-                            >
-                                View Original Post
-                                <ExternalLink className="w-4 h-4 ml-2" />
-                            </a>
+                </header>
+
+                <div className="prose prose-orange max-w-none">
+                    {recruitment.description && (
+                        <div className="mb-12">
+                            <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                                <div className="w-1.5 h-8 bg-orange-600 rounded-full mr-4"></div>
+                                Mô tả công việc
+                            </h3>
+                            <div className="text-gray-600 leading-loose whitespace-pre-line" dangerouslySetInnerHTML={{ __html: recruitment.description }} />
+                        </div>
+                    )}
+
+                    {recruitment.requirements && (
+                        <div className="mb-12">
+                            <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                                <div className="w-1.5 h-8 bg-orange-600 rounded-full mr-4"></div>
+                                Yêu cầu ứng viên
+                            </h3>
+                            <div className="text-gray-600 leading-loose whitespace-pre-line" dangerouslySetInnerHTML={{ __html: recruitment.requirements }} />
+                        </div>
+                    )}
+
+                    {recruitment.benefits && (
+                        <div>
+                            <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                                <div className="w-1.5 h-8 bg-orange-600 rounded-full mr-4"></div>
+                                Quyền lợi được hưởng
+                            </h3>
+                            <div className="text-gray-600 leading-loose whitespace-pre-line" dangerouslySetInnerHTML={{ __html: recruitment.benefits }} />
                         </div>
                     )}
                 </div>
-
-                <hr className="border-gray-100 mb-8" />
-
-                {recruitment.description && (
-                  <div className="mb-10">
-                    <div className="flex items-center mb-4">
-                        <div className="p-2 bg-blue-100 rounded-lg mr-3">
-                            <FileText className="w-5 h-5 text-blue-700" />
-                        </div>
-                        <h3 className="text-xl font-bold text-gray-900">Job Description</h3>
-                    </div>
-                    <div className={richTextClass} dangerouslySetInnerHTML={{ __html: recruitment.description }} />
-                  </div>
-                )}
-
-                {recruitment.benefits && (
-                  <div className="mb-10 bg-orange-50/50 p-6 rounded-2xl border border-orange-100">
-                    <div className="flex items-center mb-4">
-                        <div className="p-2 bg-orange-100 rounded-lg mr-3">
-                            <Gift className="w-5 h-5 text-orange-700" />
-                        </div>
-                        <h3 className="text-xl font-bold text-gray-900">Benefits & Perks</h3>
-                    </div>
-                    <div className={richTextClass} dangerouslySetInnerHTML={{ __html: recruitment.benefits }} />
-                  </div>
-                )}
-
-                {recruitment.requirements && (
-                  <div className="mb-10">
-                    <div className="flex items-center mb-4">
-                        <div className="p-2 bg-green-100 rounded-lg mr-3">
-                            <CheckCircle className="w-5 h-5 text-green-700" />
-                        </div>
-                        <h3 className="text-xl font-bold text-gray-900">Requirements</h3>
-                    </div>
-                    <div className={richTextClass} dangerouslySetInnerHTML={{ __html: recruitment.requirements }} />
-                  </div>
-                )}
-
-                {recruitment.edu && stripHtml(recruitment.edu) !== "" && (
-                  <div>
-                    <div className="flex items-center mb-4">
-                        <div className="p-2 bg-purple-100 rounded-lg mr-3">
-                            <GraduationCap className="w-5 h-5 text-purple-700" />
-                        </div>
-                        <h3 className="text-xl font-bold text-gray-900">Education</h3>
-                    </div>
-                    <div className={richTextClass} dangerouslySetInnerHTML={{ __html: recruitment.edu }} />
-                  </div>
-                )}
             </div>
         </div>
 
         <div className="lg:col-span-1 space-y-6">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sticky top-24">
-                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Hiring Company</h3>
+            <div className="bg-white rounded-[2.5rem] border border-gray-100 p-8 shadow-sm sticky top-28">
+                <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-8 text-center">Doanh nghiệp tuyển dụng</h3>
                 
                 {company ? (
-                   <div className="space-y-6">
-                      <div className="flex items-center gap-4">
-                         <div className="w-16 h-16 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-center p-2 overflow-hidden shrink-0">
+                   <div className="space-y-8">
+                      <div className="flex flex-col items-center text-center">
+                         <div className="w-24 h-24 bg-gray-50 rounded-3xl border border-gray-100 flex items-center justify-center p-4 overflow-hidden mb-6 shadow-sm group-hover:border-orange-100 transition-colors">
                             {logoSrc && !imgError ? (
                                 <img src={logoSrc} alt={company.company_name} className="w-full h-full object-contain" onError={() => setImgError(true)} />
                             ) : (
-                                <Building2 className="w-8 h-8 text-blue-600" />
+                                <Building2 className="w-12 h-12 text-orange-600" />
                             )}
                          </div>
-                         <div>
-                            <h4 className="font-bold text-gray-900 leading-tight mb-1">{company.company_name}</h4>
-                            {company.province && (
-                                <span className="inline-flex items-center text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded font-medium">
-                                    <Map className="w-3 h-3 mr-1" />
-                                    {company.province}
-                                </span>
-                            )}
-                         </div>
+                         <h4 className="text-2xl font-black text-gray-900 leading-tight mb-2">{company.company_name}</h4>
+                         <span className="inline-flex items-center text-xs font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-full uppercase tracking-tighter">
+                            {company.province || 'Toàn quốc'}
+                         </span>
                       </div>
 
-                      {company.source_company_url && (
-                        <a href={ensureHttp(company.source_company_url)} target="_blank" rel="noreferrer" className="flex items-center text-xs text-gray-500 hover:text-blue-600 transition-colors">
-                            <ExternalLink className="w-3 h-3 mr-2" />
-                            Original Job Post
-                        </a>
-                      )}
+                      <div className="space-y-4">
+                        <Link 
+                            to={`/company/${company.corporate_number}`}
+                            className="flex items-center justify-center w-full py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-orange-600 transition-all shadow-lg shadow-gray-200 active:scale-95"
+                        >
+                            Xem hồ sơ công ty
+                        </Link>
+                        {recruitment.url && (
+                            <a 
+                                href={recruitment.url} 
+                                target="_blank" 
+                                rel="noreferrer" 
+                                className="flex items-center justify-center w-full py-4 border-2 border-orange-600 text-orange-600 rounded-2xl font-bold hover:bg-orange-50 transition-all active:scale-95"
+                            >
+                                Tin gốc tuyển dụng
+                                <ExternalLink className="w-4 h-4 ml-2" />
+                            </a>
+                        )}
+                      </div>
 
-                      <p className="text-sm text-gray-500 italic">
-                        {company.company_description ? company.company_description.substring(0, 100) + '...' : 'Company description not available.'}
+                      <p className="text-sm text-gray-400 text-center italic leading-relaxed">
+                        {company.company_description ? company.company_description.substring(0, 120) + '...' : 'Thông tin giới thiệu về doanh nghiệp đang được cập nhật.'}
                       </p>
-
-                      <Link 
-                        to={`/company/${company.corporate_number}`}
-                        className="flex items-center justify-center w-full py-3 border-2 border-blue-600 text-blue-600 rounded-xl font-bold hover:bg-blue-50 transition-all"
-                      >
-                        View Full Company Profile
-                      </Link>
                    </div>
                 ) : (
-                   <div className="text-center py-4 text-gray-400">
-                      <Building2 className="w-12 h-12 mx-auto mb-2 opacity-20" />
-                      <p>Company info unavailable</p>
+                   <div className="text-center py-12 text-gray-400">
+                      <Building2 className="w-16 h-16 mx-auto mb-4 opacity-10" />
+                      <p className="font-medium">Thông tin công ty chưa sẵn sàng</p>
                    </div>
                 )}
             </div>

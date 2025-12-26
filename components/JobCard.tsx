@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Briefcase, GraduationCap, DollarSign, ChevronRight, Tag, ShieldCheck } from 'lucide-react';
+import { MapPin, Briefcase, GraduationCap, ArrowRight, ShieldCheck, Layers } from 'lucide-react';
 import { Recruitment } from '../types';
 
 interface JobCardProps {
@@ -9,134 +10,93 @@ interface JobCardProps {
 }
 
 export const JobCard: React.FC<JobCardProps> = ({ job, companyName }) => {
-  
   const stripHtml = (htmlContent?: any) => {
-    if (htmlContent === null || htmlContent === undefined) return '';
-    
-    // Convert to string and trim basic whitespace
-    let text = String(htmlContent).trim();
-    
-    // Handle literal string versions of empty/null values that sometimes come from APIs
-    const lowerText = text.toLowerCase();
-    if (
-      lowerText === '' || 
-      lowerText === 'none' || 
-      lowerText === 'null' || 
-      lowerText === 'undefined' ||
-      lowerText === '""' || 
-      lowerText === "''" || 
-      lowerText === '[]' || 
-      lowerText === '{}'
-    ) {
-      return '';
-    }
-    
-    // Create a temporary element to strip actual HTML tags
+    if (!htmlContent) return '';
     const tmp = document.createElement("DIV");
-    tmp.innerHTML = text;
-    let cleanText = (tmp.textContent || tmp.innerText || "").trim();
-
-    // Replace non-breaking spaces (\u00a0) and other hidden characters
-    cleanText = cleanText.replace(/\u00a0/g, " ").replace(/\s+/g, " ").trim();
-
-    return cleanText;
+    tmp.innerHTML = String(htmlContent);
+    return (tmp.textContent || tmp.innerText || "").trim().replace(/\s+/g, " ");
   };
 
-  const previewContent = stripHtml(job.description || job.requirements) || 'Click to see full requirements...';
   const eduText = stripHtml(job.edu);
-  
-  // Apply strict cleaning to expertise
   const expertiseText = stripHtml(job.expertise);
-  
+  const industryText = stripHtml(job.industries);
   const displaySalary = job.salary_range || job.salary;
-  const categoryText = job.category || job.job_category;
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 transition-all duration-200 hover:shadow-md hover:border-blue-200 group">
-      <div className="flex flex-col gap-1">
-        {/* Row 1: Title and Salary/Category Badges */}
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <h3 className="text-xl font-bold text-gray-900 flex-1 leading-tight group-hover:text-blue-800 transition-colors">
-            <Link to={`/recruitment/${job.media_internal_id}`}>
-              {job.title || job.job_category || 'Job Opportunity'}
-            </Link>
-          </h3>
-          <div className="flex items-center flex-wrap gap-2 md:gap-3">
+    <div className="bg-white rounded-3xl border border-gray-100 p-8 transition-all duration-300 hover:border-orange-200 hover:shadow-2xl hover:shadow-orange-100/40 group">
+      <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex-1">
+          <div className="flex flex-wrap items-center gap-2 mb-4">
             {displaySalary && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-green-50 text-green-700 border border-green-200 whitespace-nowrap">
-                <DollarSign className="w-3.5 h-3.5 mr-1" />
+              <span className="bg-orange-600 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                 {displaySalary}
               </span>
             )}
-            {categoryText && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200 whitespace-nowrap">
-                <Tag className="w-3.5 h-3.5 mr-1" />
-                {categoryText}
+            {job.category && (
+              <span className="bg-gray-100 text-gray-500 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                {job.category}
               </span>
             )}
-            <Link 
-              to={`/recruitment/${job.media_internal_id}`}
-              className="hidden md:inline-flex items-center px-4 py-1.5 border border-transparent text-sm font-semibold rounded-lg text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors whitespace-nowrap"
-            >
-              View Details
-            </Link>
+            {industryText && (
+              <span className="bg-orange-50 text-orange-600 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-orange-100">
+                {industryText}
+              </span>
+            )}
           </div>
-        </div>
-
-        {/* Row 2: Company Name */}
-        <div className="mb-2">
+          
+          <h3 className="text-2xl font-bold text-gray-900 group-hover:text-orange-600 transition-colors mb-2">
+            <Link to={`/recruitment/${job.media_internal_id}`}>
+              {job.title || job.job_category || 'Cơ hội nghề nghiệp'}
+            </Link>
+          </h3>
+          
           <Link 
             to={`/company/${job.corporate_number}`}
-            className="text-blue-600 font-semibold hover:underline decoration-2 underline-offset-4"
+            className="text-gray-500 font-medium hover:text-orange-600 block mb-6 transition-colors"
           >
-            {companyName || `Company #${job.corporate_number}`}
+            {companyName || `Công ty đối tác`}
           </Link>
-        </div>
 
-        {/* Row 3: Metadata row */}
-        <div className="flex flex-wrap items-center gap-y-2 gap-x-5 text-sm text-gray-500 mb-4">
-          <div className="flex items-center">
-            <Briefcase className="w-4 h-4 mr-1.5 text-gray-400" />
-            <span>Full Time</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div className="flex items-center text-sm text-gray-500">
+              <MapPin className="w-4 h-4 mr-2 text-orange-600" />
+              <span className="truncate">{job.address || 'Toàn quốc'}</span>
+            </div>
+            <div className="flex items-center text-sm text-gray-500">
+              <Briefcase className="w-4 h-4 mr-2 text-orange-600" />
+              <span>Toàn thời gian</span>
+            </div>
+            {expertiseText ? (
+               <div className="flex items-center text-sm text-gray-500">
+                <ShieldCheck className="w-4 h-4 mr-2 text-orange-600" />
+                <span className="truncate font-bold">{expertiseText}</span>
+              </div>
+            ) : industryText ? (
+              <div className="flex items-center text-sm text-gray-500">
+                <Layers className="w-4 h-4 mr-2 text-orange-600" />
+                <span className="truncate">{industryText}</span>
+              </div>
+            ) : (
+              <div className="flex items-center text-sm text-gray-500">
+                <GraduationCap className="w-4 h-4 mr-2 text-orange-600" />
+                <span className="truncate">{eduText || 'Yêu cầu cơ bản'}</span>
+              </div>
+            )}
+            <div className="hidden lg:flex items-center text-sm text-gray-500">
+               <Layers className="w-4 h-4 mr-2 text-orange-600" />
+               <span className="truncate">{industryText || job.job_category || 'Đa ngành'}</span>
+            </div>
           </div>
-
-          {eduText !== "" && (
-            <div className="flex items-center">
-              <GraduationCap className="w-4 h-4 mr-1.5 text-gray-400" />
-              <span className="line-clamp-1">{eduText}</span>
-            </div>
-          )}
-
-          {/* Render ONLY if we have a non-empty string after strict cleaning */}
-          {expertiseText && expertiseText !== "" && (
-            <div className="flex items-center">
-              <ShieldCheck className="w-4 h-4 mr-1.5 text-blue-500/70" />
-              <span className="font-medium text-gray-700 line-clamp-1">{expertiseText}</span>
-            </div>
-          )}
-
-          {job.address && (
-            <div className="flex items-center">
-              <MapPin className="w-4 h-4 mr-1.5 text-gray-400" />
-              <span className="line-clamp-1">{job.address}</span>
-            </div>
-          )}
         </div>
 
-        {/* Row 4: Short Preview */}
-        <div className="text-gray-600 text-sm leading-relaxed border-t border-gray-50 pt-4 line-clamp-2">
-          {previewContent}
-        </div>
-        
-        {/* Mobile View Details Button */}
-        <div className="mt-4 md:hidden">
-            <Link 
-              to={`/recruitment/${job.media_internal_id}`}
-              className="flex items-center justify-center w-full px-4 py-2 border border-blue-100 text-sm font-bold rounded-lg text-blue-700 bg-blue-50"
-            >
-              View Details
-              <ChevronRight className="w-4 h-4 ml-1" />
-            </Link>
+        <div className="flex flex-col justify-center items-end border-t md:border-t-0 md:border-l border-gray-50 pt-6 md:pt-0 md:pl-6 shrink-0">
+          <Link 
+            to={`/recruitment/${job.media_internal_id}`}
+            className="w-full md:w-auto flex items-center justify-center space-x-2 bg-orange-50 text-orange-700 font-bold px-8 py-4 rounded-2xl group-hover:bg-orange-600 group-hover:text-white transition-all duration-300 active:scale-95"
+          >
+            <span>Ứng tuyển ngay</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </div>
     </div>
