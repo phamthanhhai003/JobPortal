@@ -37,7 +37,7 @@ export const Home: React.FC = () => {
 
   const filteredJobs = recruitments.filter(job => {
     const companyName = job.corporate_number ? companies[job.corporate_number] || '' : '';
-    const searchString = `${job.title} ${job.job_category} ${companyName} ${job.expertise} ${job.industries} ${job.category}`.toLowerCase();
+    const searchString = `${job.title} ${job.job_category} ${companyName} ${job.expertise} ${job.industries} ${job.category} ${job.province}`.toLowerCase();
     return searchString.includes(searchTerm.toLowerCase());
   });
 
@@ -65,7 +65,7 @@ export const Home: React.FC = () => {
         <div className="relative z-10 max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center space-x-2 bg-white/20 px-4 py-1.5 rounded-full text-white text-xs font-bold uppercase tracking-widest mb-6 backdrop-blur-md">
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>Trang tổng hợp việc làm</span>
+                <span>Tổng hợp thông tin tuyển dụng</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-8 tracking-tight leading-tight">
                 Dự án cá nhân <br/> của <span className="underline decoration-white/40 underline-offset-8">Phạm Thanh Hải</span>
@@ -78,7 +78,7 @@ export const Home: React.FC = () => {
                 <input
                     type="text"
                     className="block w-full pl-14 pr-6 py-6 border-none rounded-3xl bg-white text-gray-900 placeholder-gray-400 focus:ring-4 focus:ring-orange-200 transition-all text-xl shadow-2xl"
-                    placeholder="Vị trí, công ty, ngành nghề..."
+                    placeholder="Vị trí, công ty, ngành nghề, địa điểm..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />

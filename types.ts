@@ -20,6 +20,7 @@ export interface Recruitment {
   category?: string; // New: Specific category field from recruitment API
   requirements?: string;
   address?: string;
+  province?: string; // New: Province directly from recruitment
   title?: string;
   salary?: string;
   salary_range?: string; // New: Range-based salary info

@@ -26,19 +26,19 @@ export const JobCard: React.FC<JobCardProps> = ({ job, companyName }) => {
     <div className="bg-white rounded-3xl border border-gray-100 p-8 transition-all duration-300 hover:border-orange-200 hover:shadow-2xl hover:shadow-orange-100/40 group">
       <div className="flex flex-col md:flex-row gap-6">
         <div className="flex-1">
-          <div className="flex flex-wrap items-center gap-2 mb-4">
+          <div className="flex flex-wrap items-center gap-3 mb-5">
             {displaySalary && (
-              <span className="bg-orange-600 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+              <span className="bg-orange-600 text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
                 {displaySalary}
               </span>
             )}
             {job.category && (
-              <span className="bg-gray-100 text-gray-500 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+              <span className="bg-gray-100 text-gray-500 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">
                 {job.category}
               </span>
             )}
             {industryText && (
-              <span className="bg-orange-50 text-orange-600 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-orange-100">
+              <span className="bg-orange-50 text-orange-600 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider border border-orange-100">
                 {industryText}
               </span>
             )}
@@ -60,32 +60,31 @@ export const JobCard: React.FC<JobCardProps> = ({ job, companyName }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <div className="flex items-center text-sm text-gray-500">
               <MapPin className="w-4 h-4 mr-2 text-orange-600" />
-              <span className="truncate">{job.address || 'Toàn quốc'}</span>
+              <span className="truncate">{job.province || job.address || 'Toàn quốc'}</span>
             </div>
             <div className="flex items-center text-sm text-gray-500">
               <Briefcase className="w-4 h-4 mr-2 text-orange-600" />
               <span>Toàn thời gian</span>
             </div>
+            
             {expertiseText ? (
                <div className="flex items-center text-sm text-gray-500">
                 <ShieldCheck className="w-4 h-4 mr-2 text-orange-600" />
                 <span className="truncate font-bold">{expertiseText}</span>
               </div>
-            ) : industryText ? (
+            ) : eduText ? (
+              <div className="flex items-center text-sm text-gray-500">
+                <GraduationCap className="w-4 h-4 mr-2 text-orange-600" />
+                <span className="truncate">{eduText}</span>
+              </div>
+            ) : null}
+
+            {industryText && (
               <div className="flex items-center text-sm text-gray-500">
                 <Layers className="w-4 h-4 mr-2 text-orange-600" />
                 <span className="truncate">{industryText}</span>
               </div>
-            ) : (
-              <div className="flex items-center text-sm text-gray-500">
-                <GraduationCap className="w-4 h-4 mr-2 text-orange-600" />
-                <span className="truncate">{eduText || 'Yêu cầu cơ bản'}</span>
-              </div>
             )}
-            <div className="hidden lg:flex items-center text-sm text-gray-500">
-               <Layers className="w-4 h-4 mr-2 text-orange-600" />
-               <span className="truncate">{industryText || job.job_category || 'Đa ngành'}</span>
-            </div>
           </div>
         </div>
 

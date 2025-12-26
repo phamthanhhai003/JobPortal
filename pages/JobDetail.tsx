@@ -61,6 +61,15 @@ export const JobDetail: React.FC = () => {
   const { recruitment, company } = data;
   const logoSrc = company?.company_logo || (company?.company_domain ? `https://logo.clearbit.com/${company.company_domain.replace(/^https?:\/\//, '').split('/')[0]}` : null);
 
+  const stripHtml = (htmlContent?: any) => {
+    if (!htmlContent) return '';
+    const tmp = document.createElement("DIV");
+    tmp.innerHTML = String(htmlContent);
+    return (tmp.textContent || tmp.innerText || "").trim().replace(/\s+/g, " ");
+  };
+
+  const industryText = stripHtml(recruitment.industries);
+
   return (
     <div className="animate-slide-up space-y-8">
        <div className="flex items-center justify-between">
@@ -78,59 +87,63 @@ export const JobDetail: React.FC = () => {
                 <div className="absolute top-0 right-0 w-48 h-48 bg-orange-50 rounded-bl-full -z-10 opacity-50"></div>
                 
                 <header className="mb-10">
-                    <div className="flex flex-wrap gap-2 mb-6">
-                        <span className="bg-orange-600 text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest">
+                    <div className="flex flex-wrap gap-3 mb-8">
+                        <span className="bg-orange-600 text-white text-sm font-bold px-5 py-2 rounded-full uppercase tracking-widest shadow-md">
                             Hot Job
                         </span>
-                        <span className="bg-gray-100 text-gray-500 text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest">
+                        <span className="bg-gray-100 text-gray-500 text-sm font-bold px-5 py-2 rounded-full uppercase tracking-widest">
                             {recruitment.category || 'Recruitment'}
                         </span>
-                        {recruitment.industries && (
-                          <span className="bg-orange-50 text-orange-600 text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest border border-orange-100">
-                             {recruitment.industries}
+                        {industryText && (
+                          <span className="bg-orange-50 text-orange-600 text-sm font-bold px-5 py-2 rounded-full uppercase tracking-widest border border-orange-100">
+                             {industryText}
                           </span>
                         )}
                     </div>
 
-                    <h1 className="text-4xl font-black text-gray-900 mb-6 leading-tight">
+                    <h1 className="text-4xl font-black text-gray-900 mb-8 leading-tight">
                         {recruitment.title || recruitment.job_category || "Cơ hội việc làm"}
                     </h1>
                     
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-6 bg-gray-50/50 rounded-3xl border border-gray-100">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-8 bg-gray-50/50 rounded-[2rem] border border-gray-100">
                         <div className="flex items-center">
-                            <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center mr-4">
-                                <DollarSign className="w-5 h-5 text-orange-600" />
+                            <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center mr-4">
+                                <DollarSign className="w-6 h-6 text-orange-600" />
                             </div>
                             <div>
-                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Mức lương</p>
-                                <p className="text-gray-900 font-extrabold">{recruitment.salary_range || recruitment.salary || 'Thỏa thuận'}</p>
+                                <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-0.5">Mức lương</p>
+                                <p className="text-gray-900 font-extrabold text-lg">{recruitment.salary_range || recruitment.salary || 'Thỏa thuận'}</p>
+                            </div>
+                        </div>
+                        
+                        {industryText && (
+                          <div className="flex items-center">
+                              <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center mr-4">
+                                  <Layers className="w-6 h-6 text-orange-600" />
+                              </div>
+                              <div>
+                                  <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-0.5">Ngành nghề</p>
+                                  <p className="text-gray-900 font-extrabold text-lg truncate max-w-[200px]">{industryText}</p>
+                              </div>
+                          </div>
+                        )}
+
+                        <div className="flex items-center">
+                            <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center mr-4">
+                                <ShieldCheck className="w-6 h-6 text-orange-600" />
+                            </div>
+                            <div>
+                                <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-0.5">Kinh nghiệm</p>
+                                <p className="text-gray-900 font-extrabold text-lg">{recruitment.expertise || 'Không yêu cầu'}</p>
                             </div>
                         </div>
                         <div className="flex items-center">
-                            <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center mr-4">
-                                <Layers className="w-5 h-5 text-orange-600" />
+                            <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center mr-4">
+                                <MapPin className="w-6 h-6 text-orange-600" />
                             </div>
                             <div>
-                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Ngành nghề</p>
-                                <p className="text-gray-900 font-extrabold truncate max-w-[150px]">{recruitment.industries || recruitment.job_category || 'Đa ngành'}</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center">
-                            <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center mr-4">
-                                <ShieldCheck className="w-5 h-5 text-orange-600" />
-                            </div>
-                            <div>
-                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Kinh nghiệm</p>
-                                <p className="text-gray-900 font-extrabold">{recruitment.expertise || 'Không yêu cầu'}</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center">
-                            <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center mr-4">
-                                <MapPin className="w-5 h-5 text-orange-600" />
-                            </div>
-                            <div>
-                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Địa điểm</p>
-                                <p className="text-gray-900 font-extrabold">{recruitment.address || 'Toàn quốc'}</p>
+                                <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-0.5">Địa điểm</p>
+                                <p className="text-gray-900 font-extrabold text-lg">{recruitment.province || recruitment.address || 'Toàn quốc'}</p>
                             </div>
                         </div>
                     </div>
@@ -172,20 +185,20 @@ export const JobDetail: React.FC = () => {
 
         <div className="lg:col-span-1 space-y-6">
             <div className="bg-white rounded-[2.5rem] border border-gray-100 p-8 shadow-sm sticky top-28">
-                <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-8 text-center">Doanh nghiệp tuyển dụng</h3>
+                <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-8 text-center">Doanh nghiệp tuyển dụng</h3>
                 
                 {company ? (
                    <div className="space-y-8">
                       <div className="flex flex-col items-center text-center">
-                         <div className="w-24 h-24 bg-gray-50 rounded-3xl border border-gray-100 flex items-center justify-center p-4 overflow-hidden mb-6 shadow-sm group-hover:border-orange-100 transition-colors">
+                         <div className="w-28 h-28 bg-gray-50 rounded-[2rem] border border-gray-100 flex items-center justify-center p-5 overflow-hidden mb-6 shadow-sm group-hover:border-orange-100 transition-colors">
                             {logoSrc && !imgError ? (
                                 <img src={logoSrc} alt={company.company_name} className="w-full h-full object-contain" onError={() => setImgError(true)} />
                             ) : (
-                                <Building2 className="w-12 h-12 text-orange-600" />
+                                <Building2 className="w-14 h-14 text-orange-600" />
                             )}
                          </div>
-                         <h4 className="text-2xl font-black text-gray-900 leading-tight mb-2">{company.company_name}</h4>
-                         <span className="inline-flex items-center text-xs font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-full uppercase tracking-tighter">
+                         <h4 className="text-2xl font-black text-gray-900 leading-tight mb-3">{company.company_name}</h4>
+                         <span className="inline-flex items-center text-sm font-bold text-orange-600 bg-orange-50 px-5 py-2 rounded-full uppercase tracking-tighter shadow-sm border border-orange-100">
                             {company.province || 'Toàn quốc'}
                          </span>
                       </div>
@@ -193,7 +206,7 @@ export const JobDetail: React.FC = () => {
                       <div className="space-y-4">
                         <Link 
                             to={`/company/${company.corporate_number}`}
-                            className="flex items-center justify-center w-full py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-orange-600 transition-all shadow-lg shadow-gray-200 active:scale-95"
+                            className="flex items-center justify-center w-full py-5 bg-gray-900 text-white rounded-2xl font-bold text-lg hover:bg-orange-600 transition-all shadow-lg shadow-gray-200 active:scale-95"
                         >
                             Xem hồ sơ công ty
                         </Link>
