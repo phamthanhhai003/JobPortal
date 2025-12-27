@@ -91,7 +91,7 @@ export const JobDetail: React.FC = () => {
                         <span className="bg-orange-600 text-white text-sm font-bold px-5 py-2 rounded-full uppercase tracking-widest shadow-md">
                             Hot Job
                         </span>
-                        <span className="bg-gray-100 text-gray-500 text-sm font-bold px-5 py-2 rounded-full uppercase tracking-widest">
+                        <span className="bg-orange-50 text-orange-600 text-sm font-bold px-5 py-2 rounded-full uppercase tracking-widest border border-orange-100">
                             {recruitment.category || 'Recruitment'}
                         </span>
                         {industryText && (
@@ -105,44 +105,44 @@ export const JobDetail: React.FC = () => {
                         {recruitment.title || recruitment.job_category || "Cơ hội việc làm"}
                     </h1>
                     
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-8 bg-gray-50/50 rounded-[2rem] border border-gray-100">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-8 bg-orange-50/30 rounded-[2rem] border border-orange-100/50">
                         <div className="flex items-center">
-                            <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center mr-4">
+                            <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center mr-4 shadow-sm">
                                 <DollarSign className="w-6 h-6 text-orange-600" />
                             </div>
                             <div>
-                                <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-0.5">Mức lương</p>
+                                <p className="text-xs text-orange-400 font-bold uppercase tracking-widest mb-0.5">Mức lương</p>
                                 <p className="text-gray-900 font-extrabold text-lg">{recruitment.salary_range || recruitment.salary || 'Thỏa thuận'}</p>
                             </div>
                         </div>
                         
                         {industryText && (
                           <div className="flex items-center">
-                              <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center mr-4">
+                              <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center mr-4 shadow-sm">
                                   <Layers className="w-6 h-6 text-orange-600" />
                               </div>
                               <div>
-                                  <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-0.5">Ngành nghề</p>
+                                  <p className="text-xs text-orange-400 font-bold uppercase tracking-widest mb-0.5">Ngành nghề</p>
                                   <p className="text-gray-900 font-extrabold text-lg truncate max-w-[200px]">{industryText}</p>
                               </div>
                           </div>
                         )}
 
                         <div className="flex items-center">
-                            <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center mr-4">
+                            <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center mr-4 shadow-sm">
                                 <ShieldCheck className="w-6 h-6 text-orange-600" />
                             </div>
                             <div>
-                                <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-0.5">Kinh nghiệm</p>
+                                <p className="text-xs text-orange-400 font-bold uppercase tracking-widest mb-0.5">Kinh nghiệm</p>
                                 <p className="text-gray-900 font-extrabold text-lg">{recruitment.expertise || 'Không yêu cầu'}</p>
                             </div>
                         </div>
                         <div className="flex items-center">
-                            <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center mr-4">
+                            <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center mr-4 shadow-sm">
                                 <MapPin className="w-6 h-6 text-orange-600" />
                             </div>
                             <div>
-                                <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-0.5">Địa điểm</p>
+                                <p className="text-xs text-orange-400 font-bold uppercase tracking-widest mb-1">Địa điểm</p>
                                 <p className="text-gray-900 font-extrabold text-lg">{recruitment.province || recruitment.address || 'Toàn quốc'}</p>
                             </div>
                         </div>
@@ -190,7 +190,7 @@ export const JobDetail: React.FC = () => {
                 {company ? (
                    <div className="space-y-8">
                       <div className="flex flex-col items-center text-center">
-                         <div className="w-28 h-28 bg-gray-50 rounded-[2rem] border border-gray-100 flex items-center justify-center p-5 overflow-hidden mb-6 shadow-sm group-hover:border-orange-100 transition-colors">
+                         <div className="w-28 h-28 bg-white rounded-[2rem] border border-orange-100 flex items-center justify-center p-5 overflow-hidden mb-6 shadow-sm">
                             {logoSrc && !imgError ? (
                                 <img src={logoSrc} alt={company.company_name} className="w-full h-full object-contain" onError={() => setImgError(true)} />
                             ) : (
@@ -206,7 +206,7 @@ export const JobDetail: React.FC = () => {
                       <div className="space-y-4">
                         <Link 
                             to={`/company/${company.corporate_number}`}
-                            className="flex items-center justify-center w-full py-5 bg-gray-900 text-white rounded-2xl font-bold text-lg hover:bg-orange-600 transition-all shadow-lg shadow-gray-200 active:scale-95"
+                            className="flex items-center justify-center w-full py-5 orange-gradient text-white rounded-2xl font-bold text-lg hover:shadow-lg hover:shadow-orange-100 transition-all shadow-md active:scale-95"
                         >
                             Xem hồ sơ công ty
                         </Link>
@@ -228,9 +228,9 @@ export const JobDetail: React.FC = () => {
                       </p>
                    </div>
                 ) : (
-                   <div className="text-center py-12 text-gray-400">
+                   <div className="text-center py-12 text-orange-200">
                       <Building2 className="w-16 h-16 mx-auto mb-4 opacity-10" />
-                      <p className="font-medium">Thông tin công ty chưa sẵn sàng</p>
+                      <p className="font-medium text-gray-400">Thông tin công ty chưa sẵn sàng</p>
                    </div>
                 )}
             </div>
