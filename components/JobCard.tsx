@@ -1,15 +1,16 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Briefcase, GraduationCap, ArrowRight, ShieldCheck, Layers } from 'lucide-react';
+import { MapPin, Briefcase, GraduationCap, ArrowRight, ShieldCheck, Layers, Eye } from 'lucide-react';
 import { Recruitment } from '../types';
 
 interface JobCardProps {
   job: Recruitment;
   companyName?: string; 
+  onQuickView?: (id: string) => void;
 }
 
-export const JobCard: React.FC<JobCardProps> = ({ job, companyName }) => {
+export const JobCard: React.FC<JobCardProps> = ({ job, companyName, onQuickView }) => {
   const stripHtml = (htmlContent?: any) => {
     if (!htmlContent) return '';
     const tmp = document.createElement("DIV");
@@ -23,7 +24,7 @@ export const JobCard: React.FC<JobCardProps> = ({ job, companyName }) => {
   const displaySalary = job.salary_range || job.salary;
 
   return (
-    <div className="bg-white rounded-3xl border border-gray-100 p-8 transition-all duration-300 hover:border-orange-200 hover:shadow-2xl hover:shadow-orange-100/40 group">
+    <div className="bg-white rounded-3xl border border-gray-100 p-8 transition-all duration-300 hover:border-orange-200 hover:shadow-2xl hover:shadow-orange-100/40 group relative overflow-hidden">
       <div className="flex flex-col md:flex-row gap-6">
         <div className="flex-1">
           <div className="flex flex-wrap items-center gap-3 mb-5">
@@ -88,12 +89,20 @@ export const JobCard: React.FC<JobCardProps> = ({ job, companyName }) => {
           </div>
         </div>
 
-        <div className="flex flex-col justify-center items-end border-t md:border-t-0 md:border-l border-gray-50 pt-6 md:pt-0 md:pl-6 shrink-0">
+        <div className="flex flex-col justify-center items-end border-t md:border-t-0 md:border-l border-gray-50 pt-6 md:pt-0 md:pl-6 shrink-0 gap-3">
+          <button 
+            onClick={() => onQuickView?.(job.media_internal_id)}
+            className="w-full md:w-auto flex items-center justify-center space-x-2 bg-orange-50 text-orange-700 font-bold px-6 py-3 rounded-2xl hover:bg-orange-100 transition-all active:scale-95 whitespace-nowrap"
+          >
+            <Eye className="w-4 h-4" />
+            <span>Xem nhanh</span>
+          </button>
+          
           <Link 
             to={`/recruitment/${job.media_internal_id}`}
-            className="w-full md:w-auto flex items-center justify-center space-x-2 bg-orange-50 text-orange-700 font-bold px-8 py-4 rounded-2xl group-hover:bg-orange-600 group-hover:text-white transition-all duration-300 active:scale-95"
+            className="w-full md:w-auto flex items-center justify-center space-x-2 orange-gradient text-white font-bold px-8 py-4 rounded-2xl transition-all duration-300 active:scale-95 shadow-lg shadow-orange-100/50"
           >
-            <span>Ứng tuyển ngay</span>
+            <span>Chi tiết</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

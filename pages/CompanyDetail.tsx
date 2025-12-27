@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { Company, Recruitment } from '../types';
 import { JobCard } from '../components/JobCard';
+import { QuickViewDrawer } from '../components/QuickViewDrawer';
 import { Loader2, Globe, MapPin, Building, ArrowLeft, ExternalLink, Map, Sparkles } from 'lucide-react';
 
 export const CompanyDetail: React.FC = () => {
@@ -13,6 +14,7 @@ export const CompanyDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [imgError, setImgError] = useState(false);
+  const [quickViewId, setQuickViewId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -62,6 +64,8 @@ export const CompanyDetail: React.FC = () => {
 
   return (
     <div className="space-y-12 animate-slide-up">
+      <QuickViewDrawer jobId={quickViewId} onClose={() => setQuickViewId(null)} />
+      
       <Link to="/companies" className="inline-flex items-center text-sm font-bold text-gray-500 hover:text-orange-600 transition-colors">
         <ArrowLeft className="w-4 h-4 mr-2" /> Quay lại danh sách
       </Link>
@@ -158,7 +162,12 @@ export const CompanyDetail: React.FC = () => {
         ) : (
             <div className="grid gap-6">
                 {jobs.map(job => (
-                    <JobCard key={job.media_internal_id} job={job} companyName={company.company_name} />
+                    <JobCard 
+                        key={job.media_internal_id} 
+                        job={job} 
+                        companyName={company.company_name} 
+                        onQuickView={(id) => setQuickViewId(id)}
+                    />
                 ))}
             </div>
         )}

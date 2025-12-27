@@ -4,6 +4,7 @@ import { api } from '../services/api';
 import { Recruitment } from '../types';
 import { JobCard } from '../components/JobCard';
 import { Pagination } from '../components/Pagination';
+import { QuickViewDrawer } from '../components/QuickViewDrawer';
 import { Loader2, Search, Filter, Sparkles } from 'lucide-react';
 
 export const Home: React.FC = () => {
@@ -12,6 +13,7 @@ export const Home: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [quickViewId, setQuickViewId] = useState<string | null>(null);
   const itemsPerPage = 6;
 
   useEffect(() => {
@@ -57,6 +59,9 @@ export const Home: React.FC = () => {
 
   return (
     <div className="space-y-12 animate-slide-up">
+      {/* Quick View Drawer */}
+      <QuickViewDrawer jobId={quickViewId} onClose={() => setQuickViewId(null)} />
+
       {/* Hero Search Section */}
       <section className="relative py-16 px-8 rounded-[3rem] orange-gradient overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
@@ -65,7 +70,7 @@ export const Home: React.FC = () => {
         <div className="relative z-10 max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center space-x-2 bg-white/20 px-4 py-1.5 rounded-full text-white text-xs font-bold uppercase tracking-widest mb-6 backdrop-blur-md">
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>Tổng hợp thông tin tuyển dụng</span>
+                <span>Trang web tổng hợp tin tuyển dụng</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-8 tracking-tight leading-tight">
                 Dự án cá nhân <br/> của <span className="underline decoration-white/40 underline-offset-8">Phạm Thanh Hải</span>
@@ -106,6 +111,7 @@ export const Home: React.FC = () => {
                 key={job.media_internal_id} 
                 job={job} 
                 companyName={job.corporate_number ? companies[job.corporate_number] : undefined}
+                onQuickView={(id) => setQuickViewId(id)}
               />
             ))}
           </div>
