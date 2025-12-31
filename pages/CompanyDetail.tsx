@@ -5,7 +5,8 @@ import { api } from '../services/api';
 import { Company, Recruitment } from '../types';
 import { JobCard } from '../components/JobCard';
 import { QuickViewDrawer } from '../components/QuickViewDrawer';
-import { Loader2, Globe, MapPin, Building, ArrowLeft, ExternalLink, Map, Sparkles, Link2 } from 'lucide-react';
+import { DetailPageSkeleton } from '../components/Skeletons';
+import { Globe, MapPin, Building, ArrowLeft, Map, Sparkles, Link2 } from 'lucide-react';
 
 export const CompanyDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -35,19 +36,13 @@ export const CompanyDetail: React.FC = () => {
       } catch (err) {
         setError('Lỗi khi tải dữ liệu đối tác.');
       } finally {
-        setLoading(false);
+        setTimeout(() => setLoading(false), 500);
       }
     };
     fetchDetails();
   }, [id]);
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[70vh]">
-        <Loader2 className="w-12 h-12 text-orange-600 animate-spin" />
-      </div>
-    );
-  }
+  if (loading) return <div className="max-w-7xl mx-auto"><DetailPageSkeleton /></div>;
 
   if (error || !company) {
     return (
@@ -158,7 +153,7 @@ export const CompanyDetail: React.FC = () => {
       <div className="space-y-8">
         <h2 className="text-3xl font-black text-gray-900 tracking-tight flex items-center">
             Vị trí đang tuyển dụng
-            <span className="ml-4 bg-orange-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter">{jobs.length}</span>
+            <span className="ml-3 text-orange-600 text-5xl font-black">{jobs.length}</span>
         </h2>
         
         {jobs.length === 0 ? (

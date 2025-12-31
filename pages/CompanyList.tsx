@@ -4,7 +4,8 @@ import { api } from '../services/api';
 import { Company } from '../types';
 import { CompanyCard } from '../components/CompanyCard';
 import { Pagination } from '../components/Pagination';
-import { Loader2, Search, Building2, Shuffle } from 'lucide-react';
+import { CompanyCardSkeleton } from '../components/Skeletons';
+import { Search, Building2, Shuffle } from 'lucide-react';
 
 export const CompanyList: React.FC = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -13,7 +14,6 @@ export const CompanyList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
 
-  // Thuật toán xáo trộn Fisher-Yates
   const shuffleArray = (array: any[]) => {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -28,13 +28,12 @@ export const CompanyList: React.FC = () => {
       try {
         setLoading(true);
         const data = await api.getCompanies();
-        // Xáo trộn ngẫu nhiên dữ liệu ngay sau khi nhận được từ API
         const randomizedData = shuffleArray(data);
         setCompanies(randomizedData);
       } catch (err) {
         console.error(err);
       } finally {
-        setLoading(false);
+        setTimeout(() => setLoading(false), 600);
       }
     };
     fetchCompanies();
@@ -50,15 +49,6 @@ export const CompanyList: React.FC = () => {
   const currentCompanies = filteredCompanies.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   useEffect(() => { setCurrentPage(1); }, [searchTerm]);
-
-  if (loading) {
-    return (
-      <div className="flex flex-col justify-center items-center min-h-[70vh] space-y-4">
-        <Loader2 className="w-12 h-12 text-orange-600 animate-spin" />
-        <p className="text-gray-400 font-bold animate-pulse">Đang sắp xếp ngẫu nhiên đối tác...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-16 animate-slide-up">
@@ -87,7 +77,11 @@ export const CompanyList: React.FC = () => {
         </div>
       </header>
 
-      {filteredCompanies.length === 0 ? (
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          {[...Array(6)].map((_, i) => <CompanyCardSkeleton key={i} />)}
+        </div>
+      ) : filteredCompanies.length === 0 ? (
         <div className="text-center py-32 bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-100">
           <Building2 className="w-16 h-16 mx-auto mb-4 text-orange-200" />
           <p className="text-xl font-bold text-gray-900">Không tìm thấy doanh nghiệp nào.</p>
@@ -101,11 +95,13 @@ export const CompanyList: React.FC = () => {
         </div>
       )}
 
-      <Pagination 
-        currentPage={currentPage} 
-        totalPages={totalPages} 
-        onPageChange={setCurrentPage} 
-      />
+      {!loading && (
+        <Pagination 
+          currentPage={currentPage} 
+          totalPages={totalPages} 
+          onPageChange={setCurrentPage} 
+        />
+      )}
     </div>
   );
 };

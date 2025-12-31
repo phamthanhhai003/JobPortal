@@ -3,12 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { RecruitmentDetail } from '../types';
+import { DetailPageSkeleton } from '../components/Skeletons';
 import { 
-  Loader2, 
   ArrowLeft, 
   Building2, 
   MapPin, 
-  Briefcase, 
   ExternalLink,
   DollarSign,
   ShieldCheck,
@@ -33,19 +32,13 @@ export const JobDetail: React.FC = () => {
       } catch (err: any) {
         setError(err.message || "Không tìm thấy thông tin công việc.");
       } finally {
-        setLoading(false);
+        setTimeout(() => setLoading(false), 500);
       }
     };
     fetchJob();
   }, [id]);
 
-  if (loading) {
-     return (
-      <div className="flex justify-center items-center min-h-[70vh]">
-        <Loader2 className="w-12 h-12 text-orange-600 animate-spin" />
-      </div>
-    );
-  }
+  if (loading) return <div className="max-w-7xl mx-auto"><DetailPageSkeleton /></div>;
 
   if (error || !data) {
     return (

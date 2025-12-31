@@ -5,7 +5,8 @@ import { Recruitment } from '../types';
 import { JobCard } from '../components/JobCard';
 import { Pagination } from '../components/Pagination';
 import { QuickViewDrawer } from '../components/QuickViewDrawer';
-import { Loader2, Search, Filter, Sparkles } from 'lucide-react';
+import { JobCardSkeleton } from '../components/Skeletons';
+import { Search, Filter, Sparkles } from 'lucide-react';
 
 export const Home: React.FC = () => {
   const [recruitments, setRecruitments] = useState<Recruitment[]>([]);
@@ -31,7 +32,8 @@ export const Home: React.FC = () => {
       } catch (err) {
         console.error(err);
       } finally {
-        setLoading(false);
+        // Add a small delay for smoother transition if API is too fast
+        setTimeout(() => setLoading(false), 800);
       }
     };
     fetchData();
@@ -48,21 +50,10 @@ export const Home: React.FC = () => {
   const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
   const currentJobs = filteredJobs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  if (loading) {
-    return (
-      <div className="flex flex-col justify-center items-center min-h-[70vh] space-y-4">
-        <Loader2 className="w-12 h-12 text-orange-600 animate-spin" />
-        <p className="text-gray-400 font-medium animate-pulse">Đang tìm những việc làm tốt nhất cho bạn...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-12 animate-slide-up">
-      {/* Quick View Drawer */}
       <QuickViewDrawer jobId={quickViewId} onClose={() => setQuickViewId(null)} />
 
-      {/* Hero Search Section */}
       <section className="relative py-16 px-8 rounded-[3rem] orange-gradient overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-400/20 rounded-full -ml-20 -mb-20 blur-3xl"></div>
@@ -91,12 +82,11 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Main Content */}
       <div className="grid gap-8">
         <div className="flex items-center justify-between mb-4 px-2">
             <div>
                 <h2 className="text-3xl font-black text-gray-900 tracking-tight">Việc làm mới nhất</h2>
-                <p className="text-gray-400 mt-1">Khám phá <span className="text-orange-600 font-bold">{filteredJobs.length}</span> cơ hội tiềm năng</p>
+                <p className="text-gray-400 mt-1">Khám phá <span className="text-orange-600 font-bold">{loading ? '...' : filteredJobs.length}</span> cơ hội tiềm năng</p>
             </div>
             <button className="flex items-center space-x-2 text-gray-400 hover:text-orange-600 font-bold px-4 py-2 border border-gray-100 rounded-xl transition-all">
                 <Filter className="w-4 h-4" />
@@ -104,7 +94,13 @@ export const Home: React.FC = () => {
             </button>
         </div>
 
-        {currentJobs.length > 0 ? (
+        {loading ? (
+          <div className="grid gap-6">
+            <JobCardSkeleton />
+            <JobCardSkeleton />
+            <JobCardSkeleton />
+          </div>
+        ) : currentJobs.length > 0 ? (
           <div className="grid gap-6">
             {currentJobs.map((job) => (
               <JobCard 
@@ -126,11 +122,13 @@ export const Home: React.FC = () => {
         )}
       </div>
 
-      <Pagination 
-        currentPage={currentPage} 
-        totalPages={totalPages} 
-        onPageChange={setCurrentPage} 
-      />
+      {!loading && (
+        <Pagination 
+          currentPage={currentPage} 
+          totalPages={totalPages} 
+          onPageChange={setCurrentPage} 
+        />
+      )}
     </div>
   );
 };
