@@ -11,7 +11,8 @@ import {
   Building2, 
   ExternalLink, 
   Loader2,
-  ArrowRight
+  ArrowRight,
+  Link2
 } from 'lucide-react';
 
 interface QuickViewDrawerProps {
@@ -166,8 +167,21 @@ export const QuickViewDrawer: React.FC<QuickViewDrawerProps> = ({ jobId, onClose
                                     <Building2 className="w-10 h-10 text-orange-600" />
                                 )}
                             </div>
-                            <div className="ml-5">
-                                <h4 className="font-black text-gray-900 leading-tight mb-1 text-lg">{data.company?.company_name}</h4>
+                            <div className="ml-5 flex-1">
+                                <div className="flex items-center justify-between">
+                                  <h4 className="font-black text-gray-900 leading-tight mb-1 text-lg">{data.company?.company_name}</h4>
+                                  {data.company?.source_company_url && (
+                                    <a 
+                                      href={data.company.source_company_url} 
+                                      target="_blank" 
+                                      rel="noreferrer" 
+                                      className="p-1.5 bg-white rounded-lg border border-orange-100 text-orange-400 hover:text-orange-600 transition-colors shadow-sm"
+                                      title="Nguồn gốc công ty"
+                                    >
+                                      <Link2 className="w-4 h-4" />
+                                    </a>
+                                  )}
+                                </div>
                                 <div className="flex items-center text-xs text-orange-400 font-bold uppercase tracking-widest">
                                     <MapPin className="w-3.5 h-3.5 mr-1.5" />
                                     {data.company?.province || 'Toàn quốc'}
@@ -190,7 +204,7 @@ export const QuickViewDrawer: React.FC<QuickViewDrawerProps> = ({ jobId, onClose
                                     rel="noreferrer" 
                                     className="flex items-center justify-center p-4 border-2 border-orange-600 text-orange-600 rounded-2xl font-black hover:bg-white transition-all active:scale-95"
                                 >
-                                    Nguồn gốc
+                                    Nguồn gốc tin
                                     <ExternalLink className="w-4 h-4 ml-2" />
                                 </a>
                             )}

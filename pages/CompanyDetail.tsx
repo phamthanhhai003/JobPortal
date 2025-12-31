@@ -5,7 +5,7 @@ import { api } from '../services/api';
 import { Company, Recruitment } from '../types';
 import { JobCard } from '../components/JobCard';
 import { QuickViewDrawer } from '../components/QuickViewDrawer';
-import { Loader2, Globe, MapPin, Building, ArrowLeft, ExternalLink, Map, Sparkles } from 'lucide-react';
+import { Loader2, Globe, MapPin, Building, ArrowLeft, ExternalLink, Map, Sparkles, Link2 } from 'lucide-react';
 
 export const CompanyDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -106,6 +106,12 @@ export const CompanyDetail: React.FC = () => {
                         <a href={company.company_domain.startsWith('http') ? company.company_domain : `https://${company.company_domain}`} target="_blank" rel="noreferrer" className="inline-flex items-center px-8 py-4 orange-gradient text-white rounded-2xl font-bold hover:shadow-lg hover:shadow-orange-200 transition-all shadow-md active:scale-95">
                             <Globe className="w-4 h-4 mr-2" />
                             Truy cập website
+                        </a>
+                    )}
+                    {company.source_company_url && (
+                        <a href={company.source_company_url} target="_blank" rel="noreferrer" className="inline-flex items-center px-8 py-4 border-2 border-orange-600 text-orange-600 rounded-2xl font-bold hover:bg-orange-50 transition-all active:scale-95">
+                            <Link2 className="w-4 h-4 mr-2" />
+                            Nguồn dữ liệu
                         </a>
                     )}
                 </div>

@@ -4,7 +4,7 @@ import { api } from '../services/api';
 import { Company } from '../types';
 import { CompanyCard } from '../components/CompanyCard';
 import { Pagination } from '../components/Pagination';
-import { Loader2, Search, Building2 } from 'lucide-react';
+import { Loader2, Search, Building2, Shuffle } from 'lucide-react';
 
 export const CompanyList: React.FC = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -13,12 +13,24 @@ export const CompanyList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
 
+  // Thuật toán xáo trộn Fisher-Yates
+  const shuffleArray = (array: any[]) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
         setLoading(true);
         const data = await api.getCompanies();
-        setCompanies(data);
+        // Xáo trộn ngẫu nhiên dữ liệu ngay sau khi nhận được từ API
+        const randomizedData = shuffleArray(data);
+        setCompanies(randomizedData);
       } catch (err) {
         console.error(err);
       } finally {
@@ -41,8 +53,9 @@ export const CompanyList: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[70vh]">
+      <div className="flex flex-col justify-center items-center min-h-[70vh] space-y-4">
         <Loader2 className="w-12 h-12 text-orange-600 animate-spin" />
+        <p className="text-gray-400 font-bold animate-pulse">Đang sắp xếp ngẫu nhiên đối tác...</p>
       </div>
     );
   }
@@ -51,8 +64,13 @@ export const CompanyList: React.FC = () => {
     <div className="space-y-16 animate-slide-up">
       <header className="flex flex-col md:flex-row justify-between items-center gap-8 bg-white p-2 border-b border-gray-100">
         <div>
-          <h1 className="text-4xl font-black text-gray-900 tracking-tight">Mạng lưới đối tác</h1>
-          <p className="text-gray-400 text-lg mt-1 font-medium">Khám phá các doanh nghiệp hàng đầu trong hệ thống</p>
+          <div className="flex items-center gap-3 mb-1">
+             <h1 className="text-4xl font-black text-gray-900 tracking-tight">Mạng lưới đối tác</h1>
+             <div className="bg-orange-50 p-2 rounded-xl" title="Danh sách hiển thị ngẫu nhiên">
+                <Shuffle className="w-5 h-5 text-orange-600" />
+             </div>
+          </div>
+          <p className="text-gray-400 text-lg font-medium">Khám phá các doanh nghiệp được hiển thị ngẫu nhiên</p>
         </div>
         
         <div className="relative w-full md:w-96 group">
