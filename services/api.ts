@@ -1,7 +1,7 @@
 import { Company, Recruitment, RecruitmentDetail } from '../types';
 
 // const API_BASE_URL = 'http://172.25.242.21:8008';
-const API_BASE_URL = `http://${window.location.hostname}:8008`;
+const API_BASE_URL = `https://job-portal-api-pied-one.vercel.app`;
 
 
 
