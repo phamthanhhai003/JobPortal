@@ -1,9 +1,10 @@
+
 import { Company, Recruitment, RecruitmentDetail } from '../types';
 
-// const API_BASE_URL = 'http://172.25.242.21:8008';
-const API_BASE_URL = `https://job-portal-api-pied-one.vercel.app`;
-
-
+// Tự động chọn URL API dựa trên môi trường chạy
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? `http://${window.location.hostname}:8008`
+  : 'https://job-portal-api-pied-one.vercel.app';
 
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 interface CacheEntry<T> {
